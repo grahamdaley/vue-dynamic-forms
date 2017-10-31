@@ -31,26 +31,30 @@ export default {
 		dynamicInput
 	},
 	props:{
-		config:{
-			required:true,
-			type:Object
+		config: {
+			required: true,
+			type: Object
+		},
+		jobType: {
+			required: true,
+			type: String
 		}
 	},
 	data () {
 		return {
-			form:new Form(this.config.inputs,this.config.request)
+			form:new Form(this.config.inputs, this.jobType, this.config.request)
 		};
 	},
 	watch:{
 		config(){
-			this.form = new Form(this.config.inputs,this.config.request)
+			this.form = new Form(this.config.inputs, this.jobType, this.config.request)
 		}
 	},
 	methods:{
 		onSubmit(){
 			this.form.submit()
 			.then((response) => {
-				this.$emit('succes',{res:response,data:this.form.data()})
+				this.$emit('succes',{res:response, data:this.form.data()})
 			})
 			.catch((err) => {
 				console.error(err)

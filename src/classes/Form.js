@@ -15,22 +15,23 @@ import { Errors } from './Errors';
 export class Form{
 
 	//constructor
-	constructor(inputs,request= {}){
+	constructor(inputs, jobType, request={}){
 		//set custom http headers
 		this.headers=request.headers || new Headers({
 			'Content-Type':'application/json',
 			'Accept':'application/json'
 		})
 
-		//allow for custom credentials
-		this.credentials= request.credentials || 'omit'
+		this.jobType = jobType
+		
+		// allow for custom credentials
+		this.credentials = request.credentials || 'omit'
 
-		//post url
+		// post url
 		this.url = request.url || ''
 
-		//method of the form
+		// method of the form
 		this.method = request.method || 'post'
-
 
 		this.originalData = inputs;
 		for (let field in inputs) {
@@ -44,9 +45,9 @@ export class Form{
 	* @returns {FormData} data - a FormData object containing all form values
 	*/
 	data() {
-		let data = {}
+		let data = {'jobType': this.jobType, 'params': {}}
 		for (let prop in this.originalData) {
-			data[this[prop].name]=this[prop].value
+			data['params'][this[prop].name]=this[prop].value
 		}
 		return data;
 	}
@@ -73,7 +74,6 @@ export class Form{
 			credentials:this.credentials
 		}
 
-
 		return new Promise((resolve, reject) => {
 			fetch(this.url, fetchData)
 			.then(res => {
@@ -82,11 +82,10 @@ export class Form{
 					reject(res)
 				})
 
-				else res.json().then(resolve)
+				else res.blob().then(resolve)
 			})
 			.catch(reject)
 		})
-
 	}
 
 	/**
